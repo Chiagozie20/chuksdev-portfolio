@@ -1,15 +1,259 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Code, Users, Briefcase, Award, Mail, Phone, Linkedin, ChevronRight, Instagram, Github, MessageCircle, Sparkles, Terminal, Laptop, Zap, Database, Globe } from 'lucide-react';
-import logo from './ChuksdevLogo.jpg';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Code, Users, Briefcase, Award, Mail, Phone, Linkedin, ChevronRight, Instagram, Github, MessageCircle, Sparkles, Terminal, Laptop, Zap, Database, Globe, Star, Quote } from 'lucide-react';
+import chuksdevLogo from './chuksdevLogo.jpg';
 
 // Logo Component
 const Logo = ({ className = "w-12 h-12" }) => (
   <img 
-    src={logo}
+    src={chuksdevLogo}
     alt="ChuksDev Logo"
     className={`${className} rounded-full object-cover`}
   />
 );
+
+// Student Avatar Component (generates placeholder avatars with initials)
+const StudentAvatar = ({ name, className = "w-12 h-12" }) => {
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const colors = [
+    'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 
+    'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-teal-500'
+  ];
+  const colorIndex = name.charCodeAt(0) % colors.length;
+  
+  return (
+    <div className={`${className} ${colors[colorIndex]} rounded-full flex items-center justify-center text-white font-bold flex-shrink-0`}>
+      {initials}
+    </div>
+  );
+};
+
+// Testimonials Data
+const testimonials = [
+  {
+    name: "Chidera Onwunyiri",
+    stack: "Full-Stack (React & Node.js)",
+    text: "ChuksDev Solutions transformed my career! I went from knowing nothing about coding to building my own e-commerce platform. The hands-on approach and real-world projects made all the difference.",
+    rating: 5,
+    date: "January 15, 2024"
+  },
+  {
+    name: "Ubah Amarachi",
+    stack: "Frontend Development (React)",
+    text: "The bootcamp exceeded my expectations. The instructors were patient, the curriculum was well-structured, and I loved the supportive community. Now I'm a confident frontend developer!",
+    rating: 4,
+    date: "February 5, 2024"
+  },
+  {
+    name: "Emeka Bright",
+    stack: "Full-Stack (Python & React)",
+    text: "Best investment I've made in myself! The capstone project helped me build a portfolio that landed me my first dev job within 2 months of graduation.",
+    rating: 5,
+    date: "March 10, 2024"
+  },
+  {
+    name: "Blessing Adeyemi",
+    stack: "Backend Development (Node.js)",
+    text: "I was skeptical at first, but ChuksDev proved me wrong. The practical approach to teaching backend development with real APIs and databases was exactly what I needed.",
+    rating: 5,
+    date: "April 2, 2024"
+  },
+  {
+    name: "Ademola Ojo",
+    stack: "Full-Stack (MERN Stack)",
+    text: "From zero to hero! The MERN stack bootcamp was intense but incredibly rewarding. I can now build complete web applications from scratch. Highly recommend!",
+    rating: 5,
+    date: "May 18, 2024"
+  },
+  {
+    name: "Abiola Taiwo",
+    stack: "Frontend Development (React)",
+    text: "The bootcamp's focus on modern frameworks like React prepared me for the real world. I'm now working as a junior developer at a tech startup!",
+    rating: 4,
+    date: "June 7, 2024"
+  },
+  {
+    name: "Oluwaseun Balogun",
+    stack: "Full-Stack (Node.js & MongoDB)",
+    text: "ChuksDev doesn't just teach you to code; they teach you to think like a developer. The problem-solving skills I gained are invaluable.",
+    rating: 5,
+    date: "July 22, 2024"
+  },
+  {
+    name: "Ifeanyi Nnamdi",
+    stack: "Backend Development (Python)",
+    text: "The Python backend course was comprehensive and practical. Learning to build REST APIs and work with databases has opened so many opportunities for me.",
+    rating: 5,
+    date: "August 14, 2024"
+  },
+  {
+    name: "Chiamaka Obi",
+    stack: "Frontend Development (React & CSS)",
+    text: "I loved the emphasis on responsive design and user experience. Now I can create beautiful, functional websites that work on any device.",
+    rating: 5,
+    date: "September 3, 2024"
+  },
+  {
+    name: "Daniel Ugochukwu",
+    stack: "Full-Stack (React & Express)",
+    text: "The instructors at ChuksDev are top-notch. They break down complex concepts into digestible lessons. I finished the bootcamp feeling confident and job-ready.",
+    rating: 5,
+    date: "October 19, 2024"
+  },
+  {
+    name: "Adaeze Favour",
+    stack: "Frontend Development (JavaScript & React)",
+    text: "Before ChuksDev, I struggled with JavaScript. Now I'm building interactive web apps with React! The learning environment was encouraging and supportive.",
+    rating: 5,
+    date: "November 8, 2024"
+  },
+  {
+    name: "Victor Onyeka",
+    stack: "Full-Stack (MERN Stack)",
+    text: "Best coding bootcamp in Nigeria! The curriculum is up-to-date, the projects are challenging, and the career support after graduation is excellent.",
+    rating: 5,
+    date: "December 24, 2024"
+  },
+  {
+    name: "Chioma Mba",
+    stack: "Backend Development (Node.js & PostgreSQL)",
+    text: "I appreciated the focus on both SQL and NoSQL databases. This knowledge has been crucial in my current role as a backend developer.",
+    rating: 5,
+    date: "January 12, 2025"
+  },
+  {
+    name: "Ikenna Okafor",
+    stack: "Full-Stack (Python & React)",
+    text: "ChuksDev gave me the tools and confidence to pursue my dream of becoming a software developer. The bootcamp was challenging but incredibly rewarding!",
+    rating: 5,
+    date: "February 28, 2025"
+  },
+  {
+    name: "Adeola Johnson",
+    stack: "Frontend Development (React & Tailwind)",
+    text: "Learning Tailwind CSS alongside React was a game-changer. I can now create modern, responsive designs quickly and efficiently.",
+    rating: 5,
+    date: "March 15, 2025"
+  },
+  {
+    name: "Obinna Kalu",
+    stack: "Full-Stack (Node.js & React)",
+    text: "The hands-on projects prepared me for real-world development. I built a full social media app during the bootcamp that's now part of my portfolio!",
+    rating: 5,
+    date: "April 30, 2025"
+  },
+  {
+    name: "Funmilayo Adebayo",
+    stack: "Frontend Development (JavaScript & Bootstrap)",
+    text: "As a complete beginner, I was nervous, but the instructors made everything easy to understand. Now I'm building websites for local businesses!",
+    rating: 5,
+    date: "May 20, 2025"
+  },
+  {
+    name: "Chinedu Okonkwo",
+    stack: "Backend Development (Python & Django)",
+    text: "The Django framework course was thorough and practical. I learned how to build secure, scalable backend systems that power modern web applications.",
+    rating: 5,
+    date: "June 9, 2025"
+  },
+  {
+    name: "Patience Udo",
+    stack: "Full-Stack (React & Node.js)",
+    text: "ChuksDev's bootcamp changed my life. I went from a non-tech background to landing a developer job at an international company. Forever grateful!",
+    rating: 5,
+    date: "July 25, 2025"
+  },
+  {
+    name: "Tunde Akinola",
+    stack: "Frontend Development (React & Redux)",
+    text: "Learning state management with Redux was challenging but the instructors were patient and helpful. Now I can build complex, scalable React applications.",
+    rating: 5,
+    date: "August 16, 2025"
+  },
+  {
+    name: "Amaka Nwosu",
+    stack: "Full-Stack (MERN Stack)",
+    text: "The capstone project was the highlight of the bootcamp. Building a complete e-commerce site from scratch gave me the confidence to apply for developer positions.",
+    rating: 5,
+    date: "September 4, 2025"
+  },
+  {
+    name: "Solomon Eze",
+    stack: "Backend Development (Node.js & Express)",
+    text: "I learned how to build RESTful APIs, handle authentication, and deploy applications. These skills are exactly what employers are looking for!",
+    rating: 5,
+    date: "October 21, 2025"
+  },
+  {
+    name: "Chinonso Okoro",
+    stack: "Frontend Development (HTML, CSS, JavaScript)",
+    text: "Starting with the basics and gradually moving to advanced topics made learning so much easier. The structure of the course was perfect for beginners.",
+    rating: 5,
+    date: "November 10, 2025"
+  },
+  {
+    name: "Grace Umeh",
+    stack: "Full-Stack (Python & React)",
+    text: "The combination of Python for backend and React for frontend is powerful. I can now build complete web applications independently!",
+    rating: 5,
+    date: "December 26, 2025"
+  },
+  {
+    name: "Kingsley Obi",
+    stack: "Backend Development (Node.js & MongoDB)",
+    text: "Learning MongoDB and building NoSQL database-driven applications was an eye-opener. The practical exercises were extremely helpful.",
+    rating: 5,
+    date: "January 5, 2026"
+  },
+  {
+    name: "Ebere Chukwudi",
+    stack: "Frontend Development (React & TypeScript)",
+    text: "Adding TypeScript to React made my code more robust and maintainable. ChuksDev prepared me well for professional development environments.",
+    rating: 5,
+    date: "January 18, 2026"
+  },
+  {
+    name: "Michael Okafor",
+    stack: "Full-Stack (MERN Stack)",
+    text: "The bootcamp's emphasis on Git and version control was crucial. I learned industry-standard practices that have been invaluable in my career.",
+    rating: 5,
+    date: "February 3, 2025"
+  },
+  {
+    name: "Jennifer Nkem",
+    stack: "Frontend Development (React & Sass)",
+    text: "I love how the course covered both CSS and Sass. Now I can create beautiful, maintainable stylesheets for any project.",
+    rating: 5,
+    date: "March 22, 2025"
+  },
+  {
+    name: "Chukwuemeka Ibe",
+    stack: "Backend Development (Python & FastAPI)",
+    text: "Learning FastAPI alongside traditional frameworks gave me a modern edge. The async programming concepts were challenging but worth it!",
+    rating: 5,
+    date: "April 11, 2025"
+  },
+  {
+    name: "Nneka Okeke",
+    stack: "Full-Stack (React & Node.js)",
+    text: "ChuksDev doesn't just teach coding; they teach professionalism, teamwork, and problem-solving. I'm now a well-rounded developer thanks to this bootcamp.",
+    rating: 5,
+    date: "May 27, 2025"
+  },
+  {
+    name: "Oluchi Nnadi",
+    stack: "Frontend Development (Vue.js)",
+    text: "The Vue.js course was fantastic! Learning an alternative to React expanded my skillset and made me more marketable as a frontend developer.",
+    rating: 5,
+    date: "June 16, 2025"
+  },
+  {
+    name: "Uche Onwuka",
+    stack: "Full-Stack (Django & React)",
+    text: "The Django + React combination is powerful for building modern web apps. The bootcamp gave me the skills to build anything I can imagine!",
+    rating: 5,
+    date: "July 1, 2025"
+  }
+];
 
 // Animated Background Component
 const AnimatedBackground = () => (
@@ -50,55 +294,75 @@ const FloatingCode = () => {
 };
 
 // Navigation Bar
-const NavBar = ({ activePage, setActivePage, isMenuOpen, setIsMenuOpen }) => (
-  <nav className="bg-black/95 backdrop-blur-md border-b-2 border-green-500 fixed w-full top-0 z-50 shadow-lg">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex justify-between items-center h-16">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActivePage('home')}>
-          <Logo className="w-10 h-10" />
-          <div>
-            <span className="text-xl font-bold text-white">CHUKS<span className="text-green-500">DEV</span></span>
-            <span className="block text-xs text-gray-400 tracking-wider">SOLUTIONS</span>
-          </div>
-        </div>
+const NavBar = ({ activePage, setActivePage, isMenuOpen, setIsMenuOpen }) => {
+  const menuRef = useRef(null);
 
-        <div className="hidden md:flex space-x-8">
-          {['home', 'about', 'services', 'bootcamp', 'contact'].map(page => (
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMenuOpen, setIsMenuOpen]);
+
+  return (
+    <nav className="bg-black/95 backdrop-blur-md border-b-2 border-green-500 fixed w-full top-0 z-50 shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActivePage('home')}>
+            <Logo className="w-10 h-10" />
+            <div>
+              <span className="text-xl font-bold text-white">CHUKS<span className="text-green-500">DEV</span></span>
+              <span className="block text-xs text-gray-400 tracking-wider">SOLUTIONS</span>
+            </div>
+          </div>
+
+          <div className="hidden md:flex space-x-8">
+            {['home', 'about', 'services', 'bootcamp', 'testimonials', 'contact'].map(page => (
+              <button
+                key={page}
+                onClick={() => setActivePage(page)}
+                className={`${activePage === page ? 'text-green-500' : 'text-white'} hover:text-green-500 transition-all uppercase text-sm font-semibold relative group`}
+              >
+                {page}
+                <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-green-500 transform origin-left transition-transform ${activePage === page ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
+              </button>
+            ))}
+          </div>
+
+          <button 
+            className="md:hidden text-white hover:text-green-500 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {isMenuOpen && (
+        <div ref={menuRef} className="md:hidden bg-gray-900 border-t border-gray-800 animate-slideDown">
+          {['home', 'about', 'services', 'bootcamp', 'testimonials', 'contact'].map(page => (
             <button
               key={page}
-              onClick={() => setActivePage(page)}
-              className={`${activePage === page ? 'text-green-500' : 'text-white'} hover:text-green-500 transition-all uppercase text-sm font-semibold relative group`}
+              onClick={() => { setActivePage(page); setIsMenuOpen(false); }}
+              className="block w-full text-left px-4 py-3 text-white hover:bg-green-500 hover:text-black transition-all uppercase text-sm font-semibold"
             >
               {page}
-              <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-green-500 transform origin-left transition-transform ${activePage === page ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`}></span>
             </button>
           ))}
         </div>
-
-        <button 
-          className="md:hidden text-white hover:text-green-500 transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-    </div>
-
-    {isMenuOpen && (
-      <div className="md:hidden bg-gray-900 border-t border-gray-800 animate-slideDown">
-        {['home', 'about', 'services', 'bootcamp', 'contact'].map(page => (
-          <button
-            key={page}
-            onClick={() => { setActivePage(page); setIsMenuOpen(false); }}
-            className="block w-full text-left px-4 py-3 text-white hover:bg-green-500 hover:text-black transition-all uppercase text-sm font-semibold"
-          >
-            {page}
-          </button>
-        ))}
-      </div>
-    )}
-  </nav>
-);
+      )}
+    </nav>
+  );
+};
 
 // Home Page
 const HomePage = ({ setActivePage }) => {
@@ -178,9 +442,9 @@ const HomePage = ({ setActivePage }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {[
-              { num: '50+', label: 'Projects Delivered' },
+              { num: '60+', label: 'Projects Delivered' },
               { num: '100+', label: 'Students Trained' },
-              { num: '3+', label: 'Years Experience' },
+              { num: '4+', label: 'Years Experience' },
               { num: '98%', label: 'Client Satisfaction' }
             ].map((stat, i) => (
               <div key={i} className="group hover:transform hover:scale-110 transition-all">
@@ -217,7 +481,7 @@ const HomePage = ({ setActivePage }) => {
               <Users className="text-green-500 mb-4 group-hover:rotate-12 transition-transform" size={56} />
               <h3 className="text-3xl font-bold text-white mb-4">Bootcamp Training</h3>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Master full-stack development from the ground up. Learn React, Node.js, Python, and build production-ready applications in an intensive, hands-on program.
+                Master full-stack development from the ground up. Learn React, Node.js, Python, PostgreSQL, etc and build production-ready applications in an intensive, hands-on program.
               </p>
               <button 
                 onClick={() => setActivePage('bootcamp')}
@@ -282,6 +546,248 @@ const AboutPage = () => (
               We believe that technology should be accessible, education should be transformative, and every brand deserves a powerful online presence. At ChuksDev Solutions, we're committed to bridging the digital divide—one student and one website at a time.
             </p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Bootcamp Page
+const BootcampPage = ({ setActivePage }) => {
+  const bootcampFeatures = [
+    {
+      title: 'Front-End Development',
+      desc: 'HTML, CSS, JavaScript, and React - design responsive, interactive user interfaces.',
+      icon: Laptop
+    },
+    {
+      title: 'Back-End Development',
+      desc: 'Node.js, Express, Python, and REST APIs - build powerful server-side logic.',
+      icon: Database
+    },
+    {
+      title: 'Databases',
+      desc: 'PostgreSQL, MongoDB, and more - Store, manage, and retrieve data with confidence using modern database systems.',
+      icon: Database
+    },
+    {
+      title: 'Developer Tools',
+      desc: 'Git & GitHub for version control, VS Code for coding, and real-world debugging tools.',
+      icon: Terminal
+    },
+    {
+      title: 'Deployment & Hosting',
+      desc: 'Take your apps live with Vercel, Netlify, Heroku, and more.',
+      icon: Globe
+    },
+    {
+      title: 'Capstone Projects',
+      desc: 'Create full-stack apps like blogs, e-commerce sites, or dashboards, perfect for your portfolio.',
+      icon: Award
+    }
+  ];
+
+  return (
+    <div className="pt-16 bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-black mb-4">
+            Full-Stack Development <span className="text-green-500">Bootcamp</span>
+          </h1>
+          <p className="text-3xl text-gray-600 italic mb-6">Code, Repeat, Master!</p>
+          <div className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all">
+            No Laptop? No Problem
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-10 rounded-xl mb-12 shadow-lg">
+          <h2 className="text-4xl font-bold text-black mb-8 text-center">What You'll Learn</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {bootcampFeatures.map((feature, idx) => {
+              const Icon = feature.icon;
+              return (
+                <div key={idx} className="bg-white p-6 rounded-xl shadow-md hover:shadow-2xl hover:scale-105 transition-all border-t-4 border-green-500 group">
+                  <Icon className="text-green-500 mb-4 group-hover:rotate-12 transition-transform" size={40} />
+                  <h3 className="text-xl font-bold text-green-500 mb-3">{feature.title}</h3>
+                  <p className="text-gray-700 leading-relaxed">{feature.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-black to-gray-900 text-white p-10 rounded-xl mb-12 shadow-2xl">
+          <h2 className="text-4xl font-bold mb-8">Program Details</h2>
+          <div className="grid md:grid-cols-2 gap-10">
+            <div>
+              <h3 className="text-2xl font-semibold text-green-500 mb-4 flex items-center gap-2">
+                <Globe size={28} />
+                Location
+              </h3>
+              <p className="text-gray-300 mb-2 flex items-center gap-2">
+                <ChevronRight size={16} /> Online at Google Meet
+              </p>
+              <p className="text-gray-300 flex items-center gap-2">
+                <ChevronRight size={16} /> Physical Classes at Kwata Junction, Awka
+              </p>
+            </div>
+            <div>
+              <h3 className="text-2xl font-semibold text-green-500 mb-4 flex items-center gap-2">
+                <Award size={28} />
+                Bonus
+              </h3>
+              <p className="text-gray-300 mb-2 flex items-center gap-2">
+                <ChevronRight size={16} /> Learn Bootstrap framework
+              </p>
+              <p className="text-gray-300 flex items-center gap-2">
+                <ChevronRight size={16} /> Build real-world projects
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <button 
+            onClick={() => setActivePage('contact')}
+            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-16 py-5 rounded-xl font-bold text-xl hover:shadow-2xl hover:shadow-green-500/50 transition-all transform hover:scale-105"
+          >
+            Enroll Now 🚀
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Testimonials Page
+const TestimonialsPage = ({ setActivePage }) => {
+  return (
+    <div className="pt-16 bg-gradient-to-b from-gray-50 to-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-bold text-black mb-4">
+            Student <span className="text-green-500">Testimonials</span>
+          </h1>
+          <p className="text-xl text-gray-600">Hear from our successful graduates</p>
+          <div className="w-24 h-1 bg-green-500 mx-auto mt-4"></div>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials.map((testimonial, idx) => (
+            <div 
+              key={idx}
+              className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all border-t-4 border-green-500 transform hover:scale-105"
+            >
+              <div className="flex items-center gap-4 mb-4">
+                <StudentAvatar name={testimonial.name} className="w-16 h-16" />
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-800 text-lg">{testimonial.name}</h3>
+                  <p className="text-sm text-green-600 font-medium">{testimonial.stack}</p>
+                  <p className="text-xs text-gray-500">{testimonial.date}</p>
+                </div>
+              </div>
+              
+              <div className="flex gap-1 mb-3">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <Star key={i} size={16} className="text-yellow-400 fill-yellow-400" />
+                ))}
+              </div>
+
+              <div className="relative">
+                <Quote className="absolute -top-2 -left-2 text-green-500 opacity-20" size={24} />
+                <p className="text-gray-700 leading-relaxed italic pl-4">
+                  "{testimonial.text}"
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-16 text-center bg-gradient-to-br from-black to-gray-900 text-white p-10 rounded-xl">
+          <h2 className="text-3xl font-bold mb-4">Ready to Join Our Success Stories?</h2>
+          <p className="text-gray-300 mb-6 text-lg">Start your journey to becoming a professional developer today!</p>
+          <button 
+            onClick={() => setActivePage('contact')}
+            className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-lg font-bold hover:shadow-2xl hover:shadow-green-500/50 transition-all transform hover:scale-105"
+          >
+            Enroll in Bootcamp
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Contact Page
+const ContactPage = () => (
+  <div className="pt-16 bg-gray-50 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="text-center mb-12">
+        <h1 className="text-5xl md:text-6xl font-bold text-black mb-4">
+          Get In <span className="text-green-500">Touch</span>
+        </h1>
+        <p className="text-xl text-gray-600">Let's build something amazing together</p>
+        <div className="w-24 h-1 bg-green-500 mx-auto mt-4"></div>
+      </div>
+
+      <div className="bg-white p-10 rounded-xl shadow-2xl mb-8">
+        <h2 className="text-3xl font-bold text-black mb-8 text-center">Contact Information</h2>
+        
+        <div className="space-y-6">
+          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
+            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <Phone className="text-white" size={28} />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-lg">Phone (WhatsApp)</p>
+              <a href="tel:+2348147193166" className="text-gray-600 hover:text-green-500 transition-colors">+234 814 719 3166</a>
+            </div>
+          </div>
+
+          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
+            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <Mail className="text-white" size={28} />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-lg">Email</p>
+              <a href="mailto:Abelchiagozie1@Gmail.Com" className="text-gray-600 hover:text-green-500 transition-colors">abelchiagozie1@gmail.Com</a>
+            </div>
+          </div>
+
+          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
+            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+              <Linkedin className="text-white" size={28} />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-lg">LinkedIn</p>
+              <p className="text-gray-600">Abel Chukwuoma</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-black to-gray-900 text-white p-10 rounded-xl text-center shadow-2xl">
+        <h3 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h3>
+        <p className="text-gray-300 mb-8 text-lg">
+          Whether you need a website or want to learn to build them yourself, we're here to help.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="https://wa.me/2348147193166" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-lg font-bold hover:shadow-2xl hover:shadow-green-500/50 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+          >
+            <MessageCircle size={20} />
+            WhatsApp Us
+          </a>
+          <a 
+            href="mailto:abelchiagozie1@gmail.Com"
+            className="border-2 border-green-500 text-green-500 px-10 py-4 rounded-lg font-bold hover:bg-green-500 hover:text-white transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+          >
+            <Mail size={20} />
+            Send Email
+          </a>
         </div>
       </div>
     </div>
@@ -369,191 +875,8 @@ const ServicesPage = () => {
   );
 };
 
-// Bootcamp Page
-const BootcampPage = ({ setActivePage }) => {
-  const bootcampFeatures = [
-    {
-      title: 'Front-End Development',
-      desc: 'HTML, CSS, JavaScript, and React - design responsive, interactive user interfaces.',
-      icon: Laptop
-    },
-    {
-      title: 'Back-End Development',
-      desc: 'Node.js, Express, Python, and REST APIs - build powerful server-side logic.',
-      icon: Database
-    },
-    {
-      title: 'Databases',
-      desc: 'Store, manage, and retrieve data with confidence using modern database systems.',
-      icon: Database
-    },
-    {
-      title: 'Developer Tools',
-      desc: 'Git & GitHub for version control, VS Code for coding, and real-world debugging tools.',
-      icon: Terminal
-    },
-    {
-      title: 'Deployment & Hosting',
-      desc: 'Take your apps live with Vercel, Netlify, Heroku, and more.',
-      icon: Globe
-    },
-    {
-      title: 'Capstone Projects',
-      desc: 'Create full-stack apps like blogs, e-commerce sites, or dashboards, perfect for your portfolio.',
-      icon: Award
-    }
-  ];
-
-  return (
-    <div className="pt-16 bg-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold text-black mb-4">
-            Full-Stack Development <span className="text-green-500">Bootcamp</span>
-          </h1>
-          <p className="text-3xl text-gray-600 italic mb-6">Code, Repeat, Master!</p>
-          <div className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all">
-            🎉 No Laptop? No Problem
-          </div>
-        </div>
-
-        <div className="bg-gray-50 p-10 rounded-xl mb-12 shadow-lg">
-          <h2 className="text-4xl font-bold text-black mb-8 text-center">What You'll Learn</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bootcampFeatures.map((feature, idx) => {
-              const Icon = feature.icon;
-              return (
-                <div key={idx} className="bg-white p-6 rounded-xl shadow-md hover:shadow-2xl hover:scale-105 transition-all border-t-4 border-green-500 group">
-                  <Icon className="text-green-500 mb-4 group-hover:rotate-12 transition-transform" size={40} />
-                  <h3 className="text-xl font-bold text-green-500 mb-3">{feature.title}</h3>
-                  <p className="text-gray-700 leading-relaxed">{feature.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-black to-gray-900 text-white p-10 rounded-xl mb-12 shadow-2xl">
-          <h2 className="text-4xl font-bold mb-8">Program Details</h2>
-          <div className="grid md:grid-cols-2 gap-10">
-            <div>
-              <h3 className="text-2xl font-semibold text-green-500 mb-4 flex items-center gap-2">
-                <Globe size={28} />
-                Location
-              </h3>
-              <p className="text-gray-300 mb-2 flex items-center gap-2">
-                <ChevronRight size={16} /> Online via Google Meet
-              </p>
-              <p className="text-gray-300 flex items-center gap-2">
-                <ChevronRight size={16} /> Physical Classes at Kwata Junction, Awka
-              </p>
-            </div>
-            <div>
-              <h3 className="text-2xl font-semibold text-green-500 mb-4 flex items-center gap-2">
-                <Award size={28} />
-                Bonus
-              </h3>
-              <p className="text-gray-300 mb-2 flex items-center gap-2">
-                <ChevronRight size={16} /> Learn Bootstrap framework
-              </p>
-              <p className="text-gray-300 flex items-center gap-2">
-                <ChevronRight size={16} /> Build real-world projects
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <button 
-            onClick={() => setActivePage('contact')}
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-16 py-5 rounded-xl font-bold text-xl hover:shadow-2xl hover:shadow-green-500/50 transition-all transform hover:scale-105"
-          >
-            Enroll Now 🚀
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Contact Page
-const ContactPage = () => (
-  <div className="pt-16 bg-gray-50 min-h-screen">
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="text-center mb-12">
-        <h1 className="text-5xl md:text-6xl font-bold text-black mb-4">
-          Get In <span className="text-green-500">Touch</span>
-        </h1>
-        <p className="text-xl text-gray-600">Let's build something amazing together</p>
-        <div className="w-24 h-1 bg-green-500 mx-auto mt-4"></div>
-      </div>
-
-      <div className="bg-white p-10 rounded-xl shadow-2xl mb-8">
-        <h2 className="text-3xl font-bold text-black mb-8 text-center">Contact Information</h2>
-        
-        <div className="space-y-6">
-          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
-            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-              <Phone className="text-white" size={28} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-800 text-lg">Phone (WhatsApp)</p>
-              <a href="tel:+2348147193166" className="text-gray-600 hover:text-green-500 transition-colors">+234 814 719 3166</a>
-            </div>
-          </div>
-
-          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
-            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-              <Mail className="text-white" size={28} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-800 text-lg">Email</p>
-              <a href="mailto:Abelchiagozie1@Gmail.Com" className="text-gray-600 hover:text-green-500 transition-colors">Abelchiagozie1@Gmail.Com</a>
-            </div>
-          </div>
-
-          <div className="flex items-center p-4 rounded-lg hover:bg-gray-50 transition-colors group">
-            <div className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-              <Linkedin className="text-white" size={28} />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-800 text-lg">LinkedIn</p>
-              <p className="text-gray-600">Abel Chukwuoma</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-br from-black to-gray-900 text-white p-10 rounded-xl text-center shadow-2xl">
-        <h3 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h3>
-        <p className="text-gray-300 mb-8 text-lg">
-          Whether you need a website or want to learn to build them yourself, we're here to help.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a 
-            href="https://wa.me/2348147193166" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-10 py-4 rounded-lg font-bold hover:shadow-2xl hover:shadow-green-500/50 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-          >
-            <MessageCircle size={20} />
-            WhatsApp Us
-          </a>
-          <a 
-            href="mailto:Abelchiagozie1@Gmail.Com"
-            className="border-2 border-green-500 text-green-500 px-10 py-4 rounded-lg font-bold hover:bg-green-500 hover:text-white transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-          >
-            <Mail size={20} />
-            Send Email
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 // Footer Component
-const Footer = () => (
+const Footer = ({ setActivePage }) => (
   <footer className="bg-gradient-to-b from-black to-gray-900 text-white py-12 border-t-2 border-green-500">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid md:grid-cols-3 gap-8 mb-8">
@@ -568,13 +891,14 @@ const Footer = () => (
           <p className="text-gray-400 italic">Building Websites & Building Futures</p>
         </div>
 
-        <div className="text-center">
+        <div className="text-center md:text-left">
           <h3 className="text-lg font-semibold mb-4 text-green-500">Quick Links</h3>
-          <div className="space-y-2">
-            <p className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">About Us</p>
-            <p className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Services</p>
-            <p className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Bootcamp</p>
-            <p className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Contact</p>
+          <div className="space-y-2 flex flex-col items-center md:items-start">
+            <button onClick={() => setActivePage('about')} className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">About Us</button>
+            <button onClick={() => setActivePage('services')} className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Services</button>
+            <button onClick={() => setActivePage('bootcamp')} className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Bootcamp</button>
+            <button onClick={() => setActivePage('testimonials')} className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Testimonials</button>
+            <button onClick={() => setActivePage('contact')} className="text-gray-400 hover:text-green-500 transition-colors cursor-pointer">Contact</button>
           </div>
         </div>
 
@@ -582,7 +906,7 @@ const Footer = () => (
           <h3 className="text-lg font-semibold mb-4 text-green-500">Connect With Us</h3>
           <div className="flex gap-4 justify-center md:justify-end">
             <a 
-              href="mailto:Abelchiagozie1@Gmail.Com" 
+              href="mailto:abelchiagozie1@gmail.com" 
               className="w-12 h-12 bg-gray-800 hover:bg-green-500 rounded-full flex items-center justify-center transition-all transform hover:scale-110 hover:rotate-12"
               target="_blank"
               rel="noopener noreferrer"
@@ -598,7 +922,7 @@ const Footer = () => (
               <MessageCircle size={20} />
             </a>
             <a 
-              href="https://instagram.com/chuksdev_solutions" 
+              href="https://instagram.com/abel_chukwuoma22" 
               className="w-12 h-12 bg-gray-800 hover:bg-green-500 rounded-full flex items-center justify-center transition-all transform hover:scale-110 hover:rotate-12"
               target="_blank"
               rel="noopener noreferrer"
@@ -630,6 +954,37 @@ const Footer = () => (
 export default function ChuksDevSolutions() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activePage, setActivePage] = useState('home');
+
+  useEffect(() => {
+    let title = 'ChuksDev Solutions';
+    switch (activePage) {
+      case 'home':
+        title += ' - Home';
+        break;
+      case 'about':
+        title += ' - About';
+        break;
+      case 'services':
+        title += ' - Services';
+        break;
+      case 'bootcamp':
+        title += ' - Bootcamp';
+        break;
+      case 'testimonials':
+        title += ' - Testimonials';
+        break;
+      case 'contact':
+        title += ' - Contact';
+        break;
+      default:
+        title += ' - Home';
+    }
+    document.title = title;
+  }, [activePage]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activePage]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -675,9 +1030,10 @@ export default function ChuksDevSolutions() {
       {activePage === 'about' && <AboutPage />}
       {activePage === 'services' && <ServicesPage />}
       {activePage === 'bootcamp' && <BootcampPage setActivePage={setActivePage} />}
+      {activePage === 'testimonials' && <TestimonialsPage setActivePage={setActivePage} />}
       {activePage === 'contact' && <ContactPage />}
 
-      <Footer />
+      <Footer setActivePage={setActivePage} />
     </div>
   );
-}
+};
